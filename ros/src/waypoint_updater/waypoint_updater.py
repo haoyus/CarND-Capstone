@@ -40,6 +40,9 @@ class WaypointUpdater(object):
         self.final_waypoints_pub = rospy.Publisher('final_waypoints', Lane, queue_size=1)
 
         # TODO: Add other member variables you need below
+        self.base_waypoints = None
+        self.waypoints_2D = None
+        self.waypoints_tree = None
 
         rospy.spin()
 
@@ -49,7 +52,10 @@ class WaypointUpdater(object):
 
     def waypoints_cb(self, waypoints):
         # TODO: Implement
-        pass
+        self.base_waypoints = waypoints
+        if None==sefl.waypoints_2D:
+            self.waypoints_2D = [waypoint.pose.pose.position.x, waypoint.pose.pose.position.x] for waypoint in waypoints.waypoints
+            self.waypoints_tree = KDTree(self.waypoints_2D)
 
     def traffic_cb(self, msg):
         # TODO: Callback for /traffic_waypoint message. Implement
