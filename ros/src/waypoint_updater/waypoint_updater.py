@@ -91,10 +91,12 @@ class WaypointUpdater(object):
         farthest_wp_idx = closest_wp_idx + LOOKAHEAD_WPS
         base_wps = self.base_waypoints[closest_wp_idx,farthest_wp_idx]
 
-        if self.stopline_wp_idx == -1 or (self.stopline_wp_idx>=farthest_wp_idx):
+        if self.stopline_wp_idx == -1 or self.stopline_wp_idx>=farthest_wp_idx:
             path.waypoints = base_wps
         else:
             path.waypoints = self.decelerate(base_wps,closest_wp_idx)
+
+        return path
 
     def decelerate(self,wps,closest_idx):
         tmp = []
