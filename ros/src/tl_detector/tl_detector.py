@@ -43,6 +43,7 @@ class TLDetector(object):
 
         self.bridge = CvBridge()
         self.light_classifier = TLClassifier()
+        print("Traffic Light Classifier Created!")
         self.listener = tf.TransformListener()
 
         self.state = TrafficLight.UNKNOWN
@@ -52,6 +53,7 @@ class TLDetector(object):
 
         self.waypoint_tree = None
         self.waypoints_2d = None
+
 
         rospy.spin()
 
@@ -122,6 +124,7 @@ class TLDetector(object):
             int: ID of traffic light color (specified in styx_msgs/TrafficLight)
 
         """
+        #return the ground truth provided in the msg
         return light.state
 
         if(not self.has_image):
@@ -130,7 +133,7 @@ class TLDetector(object):
 
         cv_image = self.bridge.imgmsg_to_cv2(self.camera_image, "bgr8")
 
-        #Get classification
+        #TODO: Get classification
         return self.light_classifier.get_classification(cv_image)
 
     def process_traffic_lights(self):
