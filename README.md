@@ -1,22 +1,29 @@
 # Self-Driving Car System Integration
+---
 
 This is my project repo for the Capstone project of the **Udacity Self-Driving Car Engineer Nano-degree**. For the installation and environment setup, please refer to the Appendix of this README or [this link](https://github.com/udacity/CarND-Capstone).
 
 In this project, I implemented a Traffic Light Detection/Classification module to detect and classify the color of traffic lights in video stream, a Waypoint Updater module that updates the planned path trajectory for the vehicle, and a Waypoint Follower module that controls the vehicle to follow the planned path. After that, all these modules are integrated in a ROS environment. Finally, the framework is tested in simulation and will be tested in real world.
 
-The system architecture of my Self-Driving system:
+Below is a graph of the system architecture of my Self-Driving system:
+
 ![alt text](imgs/final-project-ros-graph-v2.png)
 
-Simulator for system verification:
+---
+A screenshot of simulator for system verification:
+
 ![alt text](imgs/unity.png)
 
+---
 Udacity Carla vehicle to test my system:
+
 ![alt text](imgs/carla.jpg)
 
+---
 In the following sessions, I will introduce how I implemented this system step by step, following the actual sequence of my implementation.
 
 
-## 1.Start with Waypoint Updater node
+## 1. Start with Waypoint Updater node
 
 There are many ways to start with. I started by implementing a partially working **[Waypoint Updater Node](ros/src/waypoint_updater)** because to simply get the car moving is a big step, and also a good start. And to get the car moving, we need the car to follow some waypoints. To do this, we need to have the waypoints first.
 
@@ -25,7 +32,7 @@ The goal of this step is simply to publish a list of waypoints to the topic `/fi
 After this step is done, we can check by looking into the message by echoing `/final_waypoints`, or turning on the simulator where the waypoints will be visualized.
 
 
-## 2.Drive-By-Wire Node
+## 2. Drive-By-Wire Node
 
 After having the waypoints to follow, we need to program the car to actually follow those points. This is done by two steps: 1.generate control commands for each individual waypoint, and 2.control the vehicle by acceleration/braking/steering at each waypoint. The step one is actually done in the Waypoint Follower Node, which was implemented based on a **_pure persuit module_**. For step 2, I implemented the yaw and speed controllers, which are based on PID controller in the **[twist controller node](ros/src/twist_controller)**.
 
@@ -112,7 +119,7 @@ The generated tfrecord files can be found [here](data/).
 
 #### Pipeline Config File
 
-Now that the TF record files are ready, the label map text is ready, are we ready to train a pre-trained model by transfer learning? Not quite. First, we need to first download a pre-trained model such as SSD-MobileNet-COCO from the [TF Model Zoo](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/detection_model_zoo.md). And we need to get a sample pipeline config file like [this one](training/ssd_mobilenet_v1_coco.config), they can be found in [Tensorflow API](https://github.com/tensorflow/models/tree/master/research/object_detection/samples/configs) as well.
+Now that the TF record files are ready, the label map text is ready, are we ready to train a pre-trained model by transfer learning? Not quite. First, we need to first download a pre-trained model such as SSD-MobileNet-COCO from the [TF Model Zoo](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/detection_model_zoo.md). And we need to get a sample pipeline config file like [this one](data/ssd_mobilenet_v1_coco.config), they can be found in [Tensorflow API](https://github.com/tensorflow/models/tree/master/research/object_detection/samples/configs) as well.
 
 After obtaining a config file, I modified it according to my training needs. For example, the `num_classes` should be modified from 90 to 4, which is my class number, which are `stop`, `warning`, `go` and `warningLeft`.
 ```
@@ -199,11 +206,11 @@ The test is also done in the Tensorflow Object Detection API directory, with thi
 The model is enventually deployed in the the **Traffic Light Detection Node**, in [_tl_classifier.py_](ros/src/tl_detector/light_classification/tl_classifier.py).
 
 
-## 4.Test in Simulation
+## 4. Test in Simulation
 
 To test the system, I ran the system with the simulator provided by Udacity. The car follows lane center to drive forward, and it actually stops in front of red lights.
 
-## 5.TODO list
+## 5. TODO list
 
     1. Deploy the system in Carla simulator to test with more complicated traffic scenarios.
     2. Train the ssd mobilenet model to detect vehicles and traffic lights.
