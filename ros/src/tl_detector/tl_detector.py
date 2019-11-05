@@ -43,7 +43,7 @@ class TLDetector(object):
 
         self.bridge = CvBridge()
         self.light_classifier = TLClassifier()
-        print("Traffic Light Classifier Created!")
+        #print("Traffic Light Classifier Created!")
         self.listener = tf.TransformListener()
 
         self.state = TrafficLight.UNKNOWN
@@ -51,7 +51,7 @@ class TLDetector(object):
         self.last_wp = -1
         self.state_count = 0
 
-        self.waypoint_tree = None
+        self.waypoints_tree = None
         self.waypoints_2d = None
 
 
@@ -66,9 +66,11 @@ class TLDetector(object):
             self.waypoints_2d = [[waypoint.pose.pose.position.x,waypoint.pose.pose.position.y]
                                  for waypoint in waypoints.waypoints]
             self.waypoints_tree = KDTree(self.waypoints_2d)
+            print("TL_detector: waypoints_tree contructed!")
 
     def traffic_cb(self, msg):
         self.lights = msg.lights
+        #print("TL_detector: traffic lights received!")
 
     def image_cb(self, msg):
         """Identifies red lights in the incoming camera image and publishes the index
@@ -81,6 +83,7 @@ class TLDetector(object):
         self.has_image = True
         self.camera_image = msg
         light_wp, state = self.process_traffic_lights()
+        #print("TL_detector: got light_wp index ",light_wp," and its state ",state)
 
         '''
         Publish upcoming red lights at camera frequency.
@@ -111,7 +114,7 @@ class TLDetector(object):
 
         """
         # implement
-        closest_idx = self.waypoint_tree.query([poseX,poseY],1)[1]
+        closest_idx = self.waypoints_tree.query([poseX,poseY],1)[1]
         return closest_idx
 
     def get_light_state(self, light):
@@ -152,6 +155,7 @@ class TLDetector(object):
         stop_line_positions = self.config['stop_line_positions']
         if(self.pose):
             car_wp_idx = self.get_closest_waypoint(self.pose.pose.position.x, self.pose.pose.position.y)
+            #print("TL_detector: car waypoint index: ",car_wp_idx)
 
         #TODO find the closest visible traffic light (if one exists)
         #Done
