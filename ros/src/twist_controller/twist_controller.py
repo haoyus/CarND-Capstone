@@ -13,11 +13,11 @@ class Controller(object):
         # TODO: Tune
         self.yaw_controller = YawController(wheel_base,steer_ratio,0.1,max_lat_accel,max_steer_angle)
 
-        kp = 0.3
+        kp = 0.2
         ki = 0.1
-        kd = 0.0
+        kd = 0.05
         min_th = 0 #min throttle value
-        max_th = 0.2
+        max_th = 0.1
         self.throttle_controller = PID(kp,ki,kd,min_th,max_th)
 
         tau = 0.5 #cutoff frequency = 1/(2pi*tau)

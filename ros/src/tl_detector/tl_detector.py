@@ -34,7 +34,7 @@ class TLDetector(object):
         rely on the position of the light and the camera image to predict it.
         '''
         sub3 = rospy.Subscriber('/vehicle/traffic_lights', TrafficLightArray, self.traffic_cb)
-        sub6 = rospy.Subscriber('/image_color', Image, self.image_cb, buff_size=2*52428800)
+        sub6 = rospy.Subscriber('/image_color', Image, self.image_cb, queue_size=1,buff_size=2**25)
 
         config_string = rospy.get_param("/traffic_light_config")
         self.config = yaml.load(config_string)
@@ -82,6 +82,7 @@ class TLDetector(object):
         """
         self.has_image = True
         self.camera_image = msg
+
         light_wp, state = self.process_traffic_lights()
         #print("TL_detector: got light_wp index ",light_wp," and its state ",state)
 
@@ -127,6 +128,12 @@ class TLDetector(object):
             int: ID of traffic light color (specified in styx_msgs/TrafficLight)
 
         """
+        cv_image = self.bridge.imgmsg_to_cv2(self.camera_image, "bgr8")
+
+        cv2.imshow("Image window", cv_image)
+        if cv2.waitKey(25) & 0xFF == ord('q'):
+                cv2.destroyAllWindows()
+
         #return the ground truth provided in the msg
         return light.state
 
@@ -134,7 +141,7 @@ class TLDetector(object):
             self.prev_light_loc = None
             return False
 
-        cv_image = self.bridge.imgmsg_to_cv2(self.camera_image, "bgr8")
+        
 
         #TODO: Get classification
         return self.light_classifier.get_classification(cv_image)

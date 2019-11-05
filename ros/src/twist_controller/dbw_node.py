@@ -113,8 +113,7 @@ class DBWNode(object):
         bcmd.pedal_cmd_type = BrakeCmd.CMD_TORQUE
         bcmd.pedal_cmd = brake
         self.brake_pub.publish(bcmd)
-
-        print("DBW publishing throttle steer and brake")
+        
 
 
 if __name__ == '__main__':
