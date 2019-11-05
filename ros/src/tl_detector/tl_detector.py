@@ -42,8 +42,7 @@ class TLDetector(object):
         self.upcoming_red_light_pub = rospy.Publisher('/traffic_waypoint', Int32, queue_size=1)
 
         self.bridge = CvBridge()
-        self.light_classifier = TLClassifier()
-        #print("Traffic Light Classifier Created!")
+        
         self.listener = tf.TransformListener()
 
         self.state = TrafficLight.UNKNOWN
@@ -54,6 +53,8 @@ class TLDetector(object):
         self.waypoints_tree = None
         self.waypoints_2d = None
 
+        self.light_classifier = TLClassifier(0.05)
+        print("Traffic Light Classifier Created!")
 
         rospy.spin()
 
@@ -62,7 +63,7 @@ class TLDetector(object):
 
     def waypoints_cb(self, waypoints):
         self.waypoints = waypoints
-        if None == self.waypoints_2d:
+        if self.waypoints_2d==None:
             self.waypoints_2d = [[waypoint.pose.pose.position.x,waypoint.pose.pose.position.y]
                                  for waypoint in waypoints.waypoints]
             self.waypoints_tree = KDTree(self.waypoints_2d)
@@ -128,23 +129,25 @@ class TLDetector(object):
             int: ID of traffic light color (specified in styx_msgs/TrafficLight)
 
         """
-        cv_image = self.bridge.imgmsg_to_cv2(self.camera_image, "bgr8")
-
-        cv2.imshow("Image window", cv_image)
-        if cv2.waitKey(25) & 0xFF == ord('q'):
-                cv2.destroyAllWindows()
+        if self.light_classifier is None:  # Stop if classifer is not yet ready
+            return TrafficLight.RED
+        
+        #cv2.imshow("Image window", cv_image)
+        #if cv2.waitKey(25) & 0xFF == ord('q'):
+        #    cv2.destroyAllWindows()
 
         #return the ground truth provided in the msg
-        return light.state
+        #return light.state
 
         if(not self.has_image):
             self.prev_light_loc = None
             return False
 
-        
+        cv_image = self.bridge.imgmsg_to_cv2(self.camera_image, "bgr8")
+        cv_image = cv2.cvtColor(cv_image, cv2.COLOR_BGR2RGB)
 
-        #TODO: Get classification
-        return self.light_classifier.get_classification(cv_image)
+        #TODO: Get classification.Done
+        return self.light_classifier.get_classification(cv_image,True)
 
     def process_traffic_lights(self):
         """Finds closest visible traffic light, if one exists, and determines its

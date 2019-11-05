@@ -208,7 +208,15 @@ The model is enventually deployed in the the **Traffic Light Detection Node**, i
 
 ## 4. Test in Simulation
 
-To test the system, I ran the system with the simulator provided by Udacity. The car follows lane center to drive forward, and it actually stops in front of red lights.
+To test the system, I ran the system with the simulator provided by Udacity. Because my laptop doesn't have a GPU, I experienced a huge delay when I turned on the camera. However, I was still able to verify that my traffic light detector does detect traffic lights:
+
+Detection of close distance:
+
+![alt text](imgs/detect-green-1.png)
+
+Detection of far distance:
+
+![alt text](imgs/detect-green-2.png)
 
 ## 5. TODO list
 
